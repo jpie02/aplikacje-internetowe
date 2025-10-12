@@ -1,0 +1,97 @@
+body {
+    font-family: "Segoe UI", sans-serif;
+    line-height: 1.6;
+    background-image: url('images/750-1232688904xyfk.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, p {
+    margin: 0;
+    padding: 0;
+}
+
+div {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.title {
+    color: #fff;
+    text-align: center;
+}
+
+.title h1 {
+    font-size: 5rem;
+    letter-spacing: 20px;
+}
+
+h2 {
+    background-color: #eee;
+    border-left: 5px solid cadetblue;
+    font-size: 1.8rem;
+    color: cadetblue;
+    padding-left: 0.5rem;
+}
+
+h3 {
+    border-bottom: 2px solid #ccc;
+    font-size: 1.4rem;
+    color: #333;
+    margin-top: 0.5rem;
+}
+
+.paragraph-1,
+.paragraph-2,
+.paragraph-3,
+.paragraph-4,
+.paragraph-5,
+.paragraph-6,
+.paragraph-7,
+.paragraph-8 {
+    background-color: rgba(250, 250, 250, 0.6); /* translucent white */
+    border-left: 3px solid #ccc;
+    border-radius: 10px;         /* rounded corners */
+    padding: 1rem;              /* space inside */
+    margin: 1rem 0;            /* spacing between paragraphs */
+    backdrop-filter: blur(4px); /* optional: adds a frosted-glass effect */
+    width: 80%;
+}
+
+.paragraph-container {
+    display: flex;
+    flex-direction: column;     /* stack paragraphs vertically */
+    align-items: center;        /* center horizontally */
+    justify-content: center;    /* center vertically if container has height */
+    padding: 2rem;
+}
+
+p {
+    padding: 0.5rem 0;
+    color: #444;
+    font-size: 1rem;
+    text-align: justify;
+}
+
+.unordered-list ul {
+    list-style: disc inside;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.unordered-list li {
+    padding: 0.25rem 0;
+    font-size: 2rem;
+    color: #333;
+}
+
+.unordered-list li:hover {
+    color: cadetblue;
+    cursor: default;
+    transition: color 0.2s ease-in-out;
+}
