@@ -106,3 +106,8 @@ li {
 .add-task button:hover {
     background: #736875;
 }
+
+.highlight {
+    background-color: #c4a9b6;
+    font-weight: bold;
+}

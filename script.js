@@ -1,109 +1,194 @@
+class Todo {
+    static term = '';
+
+    constructor(text, date, done = false) {
+        // zapisanie danych taska
+        this.text = text;
+        this.date = date;
+        this.done = done;
+    }
+
+    toggleDone() {
+        // zmiana statusu ukończenia taska (checkbox)
+        this.done = !this.done;
+    }
+
+    updateText(newText) {
+        // zmiana treści taska
+        this.text = newText;
+    }
+
+    updateDate(newDate) {
+        // zmiana daty taska
+        this.date = newDate;
+    }
+
+    static getFilteredTasks(allTasks) {
+        // pobieranie i usuwanie spacji z początku i końca inputu wyszukiwania
+        const term = Todo.term.trim();
+
+        // sprawdzanie, czy ma co najmniej 2 znaki i czy nie jest pusty
+        if (!term || term.length < 2)
+            return allTasks;
+
+        // tworzenie escaped regex
+        // aby znaki wpisane przez użytkownika nie zostały traktowane jako symbole wyrażeń regularnuch
+        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(escaped, 'i');
+
+        // zwrócenie tylko pasujących tasków to-do listy
+        return allTasks.filter(task => regex.test(task.text));
+    }
+}
+
 const taskInput = document.getElementById('taskInput');
 const taskDate = document.getElementById('taskDate');
 const addTaskBtn = document.getElementById('addTaskBtn');
 const taskList = document.getElementById('taskList');
 const searchInput = document.getElementById('searchInput');
 
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+// wczytanie danych z localStorage
+let tasks = JSON.parse(localStorage.getItem('tasks'));
 
-// Save tasks to localStorage
+// odtworzenie obiektów klasy todo po odczycie danych
+tasks = tasks.map(t => new Todo(t.text, t.date, t.done));
+
 function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Render the list
 function renderTasks(filter = '') {
+    // czyszczenie listy zadań
     taskList.innerHTML = '';
-    tasks
-        .filter(task => task.text.toLowerCase().includes(filter.toLowerCase()))
-        .forEach((task, index) => {
-            const li = document.createElement('li');
 
-            const taskLeft = document.createElement('div');
-            taskLeft.className = 'task-left';
+    // pobieranie filtrowanej to-do listy
+    Todo.getFilteredTasks(tasks).forEach((task, index) => {
+        // utworzenie elementu li dla zadania
+        const li = document.createElement('li');
+        const taskLeft = document.createElement('div');
+        taskLeft.className = 'task-left';
 
-            // Checkbox
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = task.done;
-            checkbox.addEventListener('change', () => {
-                task.done = checkbox.checked;
-                saveTasks();
-            });
+        // utworzenie checkboxa taska
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.done;
+        checkbox.addEventListener('change', () => {
+            task.toggleDone();
+            saveTasks();
+        });
 
-            // Task text
-            const span = document.createElement('span');
-            span.innerHTML = highlightText(task.text, filter);
-            span.classList.toggle('completed', task.done);
+        // wyświetlenie treści taska
+        const span = document.createElement('span');
+        span.innerHTML = highlightText(task.text, Todo.term);
+        span.classList.toggle('completed', task.done);
 
-            // Inline editing
-            span.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.value = task.text;
-                span.replaceWith(input);
-                input.focus();
+        // edycja tytułu taska po podwójnym kliknięciu
+        span.addEventListener('dblclick', (e) => {
+            e.stopPropagation();
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = task.text;
+            span.replaceWith(input);
+            input.focus();
 
-                const saveEdit = () => {
-                    const newText = input.value.trim();
-                    if (newText.length >= 3 && newText.length <= 255) {
-                        task.text = newText;
-                        saveTasks();
+            const saveEdit = () => {
+                const newText = input.value.trim();
+
+                if (newText.length >= 3 && newText.length <= 255) {
+                    task.updateText(newText);
+                    saveTasks();
+                }
+                renderTasks(searchInput.value);
+            };
+
+            // zapis po kliknięciu poza listę
+            input.addEventListener('blur', saveEdit);
+        });
+
+        // wyświetlenie terminu taska
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'task-date';
+        dateSpan.textContent = task.date || '';
+
+        // edycja terminu taska po podwójnym kliknięciu
+        dateSpan.addEventListener('dblclick', (e) => {
+            e.stopPropagation();
+
+            const input = document.createElement('input');
+            input.type = 'date';
+            input.value = task.date || '';
+            dateSpan.replaceWith(input);
+            input.focus();
+
+            const saveDate = () => {
+                const newDate = input.value;
+
+                // sprawdzanie, czy wpisany termin jest w przyszłości
+                if (newDate) {
+                    const selected = new Date(newDate);
+                    const now = new Date();
+                    if (selected <= now) {
+                        alert('Date must be in the future.');
+                        renderTasks(searchInput.value);
+                        return;
                     }
-                    renderTasks(searchInput.value);
-                };
-
-                input.addEventListener('blur', saveEdit);
-                input.addEventListener('keydown', (ev) => {
-                    if (ev.key === 'Enter') saveEdit();
-                });
-            });
-
-            // Date
-            const dateSpan = document.createElement('span');
-            dateSpan.className = 'task-date';
-            dateSpan.textContent = task.date || '';
-
-            taskLeft.appendChild(checkbox);
-            taskLeft.appendChild(span);
-            taskLeft.appendChild(dateSpan);
-
-            // Delete
-            const del = document.createElement('a');
-            del.className = 'delete-link';
-            del.textContent = 'Delete';
-            del.href = '#';
-            del.addEventListener('click', (e) => {
-                e.preventDefault();
-                tasks.splice(index, 1);
+                }
+                task.updateDate(newDate);
                 saveTasks();
                 renderTasks(searchInput.value);
-            });
+            };
 
-            li.appendChild(taskLeft);
-            li.appendChild(del);
-            taskList.appendChild(li);
+            // zapis po kliknięciu poza listę
+            input.addEventListener('blur', saveDate);
         });
+
+        // dodanie elementów do lewej sekcji taska
+        // (checkbox, tytuł, data)
+        taskLeft.appendChild(checkbox);
+        taskLeft.appendChild(span);
+        taskLeft.appendChild(dateSpan);
+
+        // utworzenie linku/przycisku usuwającego zadanie
+        const del = document.createElement('a');
+        del.className = 'delete-link';
+        del.textContent = 'Delete';
+        del.href = '#';
+        del.addEventListener('click', (e) => {
+            e.preventDefault();
+            // usunięcie taska z to-do listy
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks(searchInput.value);
+        });
+
+        // dodanie wszystkiego do elementu listy
+        li.appendChild(taskLeft);
+        li.appendChild(del);
+        taskList.appendChild(li);
+    });
 }
 
-// Highlight matching search text
 function highlightText(text, filter) {
-    if (!filter || filter.length < 2) return text;
-    const regex = new RegExp(`(${filter})`, 'gi');
+    // podświetlanie dopasowanego wyszukiwania w tytule taska
+    if (!filter || filter.length < 2)
+        return text;
+    const escaped = filter.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'gi');
     return text.replace(regex, `<span class="highlight">$1</span>`);
 }
 
-// Add new task
+// dodawanie nowego taska po kliknięciu przycisku "save"
 addTaskBtn.addEventListener('click', () => {
     const text = taskInput.value.trim();
     const dateValue = taskDate.value;
 
+    // sprawdzenie długości tytułu taska
     if (text.length < 3 || text.length > 255) {
         alert('Task must be between 3 and 255 characters.');
         return;
     }
 
+    // sprawdzenie czy termin taska jest w przyszłości
     if (dateValue) {
         const now = new Date();
         const selected = new Date(dateValue);
@@ -113,20 +198,21 @@ addTaskBtn.addEventListener('click', () => {
         }
     }
 
-    tasks.push({ text, date: dateValue, done: false });
+    // dodanie zadania do to-do listy i jego zapis
+    const newTask = new Todo(text, dateValue);
+    tasks.push(newTask);
     saveTasks();
     renderTasks();
+
+    // czyszczenie inputów
     taskInput.value = '';
     taskDate.value = '';
 });
 
-// Search functionality
+// aktualizowanie frazy (term) filtrowania przy wpisywaniu
 searchInput.addEventListener('input', () => {
-    const value = searchInput.value.trim();
-    if (value.length >= 2 || value.length === 0) {
-        renderTasks(value);
-    }
+    Todo.term = searchInput.value.trim();
+    renderTasks();
 });
 
-// Initial render
 renderTasks();
