@@ -1,25 +1,25 @@
 class Todo {
     static term = '';
 
+    // tworzenie nowego obiektu/taska za pomocą konstruktora
     constructor(text, date, done = false) {
-        // zapisanie danych taska
         this.text = text;
         this.date = date;
         this.done = done;
     }
 
+    // zmiana statusu ukończenia taska (checkbox)
     toggleDone() {
-        // zmiana statusu ukończenia taska (checkbox)
         this.done = !this.done;
     }
 
+    // zmiana treści taska
     updateText(newText) {
-        // zmiana treści taska
         this.text = newText;
     }
 
+    // zmiana daty taska
     updateDate(newDate) {
-        // zmiana daty taska
         this.date = newDate;
     }
 
