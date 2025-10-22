@@ -50,7 +50,7 @@ const searchInput = document.getElementById('searchInput');
 // wczytanie danych z localStorage
 let tasks = JSON.parse(localStorage.getItem('tasks'));
 
-// odtworzenie obiektów klasy todo po odczycie danych
+// odtworzenie obiektów klasy to-do po odczycie danych
 tasks = tasks.map(t => new Todo(t.text, t.date, t.done));
 
 function saveTasks() {
