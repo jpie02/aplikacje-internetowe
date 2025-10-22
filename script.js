@@ -57,7 +57,7 @@ function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-function renderTasks(filter = '') {
+function renderTasks() {
     // czyszczenie listy zadań
     taskList.innerHTML = '';
 
