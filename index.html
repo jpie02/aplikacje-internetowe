@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Puzzle</title>
+        <link rel="stylesheet" href="leaflet-1.7.1/leaflet.css" />
+        <link rel="stylesheet" href="styles.css" />
+        <script src="leaflet-1.7.1/leaflet-src.js"></script>
+        <script src="leaflet-1.7.1/leaflet-providers.js"></script>
+        <script src="leaflet-1.7.1/leaflet-image.js"></script>
+    </head>
+    <body>
 
-</body>
+        <div id="buttons">
+            <button id="getLocation">Get Current Location</button>
+            <button id="saveButton">Save Raster Map</button>
+        </div>
+
+        <div id="container">
+            <div id="map"></div>
+            <div id="puzzleBoard"></div>
+        </div>
+
+        <div id="puzzlePieces"></div>
+    </body>
+    <script src="script.js"></script>
 </html>
