@@ -1,10 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prognoza pogody</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="container">
+    <h1>Prognoza pogody</h1>
 
+    <input type="text" id="cityInput" placeholder="Wpisz miasto...">
+    <button id="weatherBtn">Zatwierdź</button>
+
+    <div id="currentWeather" class="box">
+        <p class="placeholder">Bieżąca pogoda</p>
+    </div>
+
+    <div id="forecast" class="box">
+        <p class="placeholder">Prognoza 5-dniowa</p>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
